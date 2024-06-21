@@ -1,39 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { Pokemon } from "./types";
 import { Link } from "react-router-dom";
+import PokemonList from "./PokemonList";
+import { Button } from "./components/ui/button";
 
 function App() {
-  const { isPending, error, data } = useQuery<Pokemon[]>({
-    queryKey: ["pokemon"],
-    queryFn: () => fetch("/api/pokemon").then((res) => res.json()),
-  });
-
-  if (isPending) return "Loading...";
-
-  if (error) return "An error has occurred: " + error.message;
-
-  if (!data) return "No data";
-
   return (
-    <div className="h-screen overflow-y-auto p-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {data.map((pokemon) => (
-          <Link key={pokemon.id} to={`/pokemons/${pokemon.id}`}>
-            <div className="p-4 border border-gray-200 rounded-md shadow-md">
-              <h2 className="text-xl font-bold">{pokemon.name}</h2>
-              <p className="text-gray-500">{pokemon.type}</p>
-              <p className="text-gray-500">{pokemon.abilities}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      <div>
-        <Link to="/new">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            New Pokemon
-          </button>
-        </Link>
+    <div className="h-screen flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center gap-4 w-full max-w-lg">
+        <div className="flex justify-end w-full">
+          <Button asChild>
+            <Link to="/new">New Pokemon</Link>
+          </Button>
+        </div>
+        <div className="w-full h-96 overflow-y-auto">
+          <PokemonList />
+        </div>
       </div>
     </div>
   );

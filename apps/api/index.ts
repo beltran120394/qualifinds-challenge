@@ -11,6 +11,7 @@ const pokemonSchema = zod.object({
   name: zod.string(),
   type: zod.string(),
   abilities: zod.string(),
+  description: zod.string(),
 });
 
 app.use(bodyParser.json());

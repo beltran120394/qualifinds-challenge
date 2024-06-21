@@ -8,8 +8,9 @@ datasource db {
 }
 
 model Pokemon {
-  id        Int    @id @default(autoincrement())
-  name      String
-  type      String
-  abilities String
+  id          Int    @id @default(autoincrement())
+  name        String
+  type        String
+  abilities   String
+  description String @default("Test Description")
 }

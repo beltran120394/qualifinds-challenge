@@ -1,6 +1,14 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Pokemon } from "./types";
+import { Button } from "./components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./components/ui/card";
 
 export default function PokemonInfo() {
   const { id } = useParams<{ id: string }>();
@@ -17,24 +25,26 @@ export default function PokemonInfo() {
   if (!data) return "No data";
 
   return (
-    <div className="h-screen overflow-y-auto p-4">
-      <Link to="/">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Back
-        </button>
-      </Link>
-      <div className="p-4 border border-gray-200 rounded-md shadow-md">
-        <h2 className="text-xl font-bold">
-          {data.name} (#{data.id})
-        </h2>
-        <p className="text-gray-500">Type: {data.type}</p>
-        <p className="text-gray-500">Abilities: {data.abilities}</p>
+    <div className="h-screen flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center gap-4 w-full max-w-lg">
+        <div className="flex justify-end w-full">
+          <Button asChild>
+            <Link to={`/pokemons/${id}/edit`}>Edit Pokemon</Link>
+          </Button>
+        </div>
+        <div className="flex flex-col gap-4 w-full">
+          <Card>
+            <CardHeader>
+              <CardTitle>{data.name}</CardTitle>
+              <CardDescription>{data.type}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>{data.description}</p>
+              <p>Abilities: {data.abilities}</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-      <Link to={`/pokemons/${id}/edit`}>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Edit
-        </button>
-      </Link>
     </div>
   );
 }
