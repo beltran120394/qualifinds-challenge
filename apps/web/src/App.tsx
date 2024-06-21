@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import "./App.css";
 import { Pokemon } from "./types";
+import { Link } from "react-router-dom";
 
 function App() {
   const { isPending, error, data } = useQuery<Pokemon[]>({
@@ -12,9 +12,21 @@ function App() {
 
   if (error) return "An error has occurred: " + error.message;
 
-  console.log(data);
+  if (!data) return "No data";
 
-  return <></>;
+  return (
+    <div className="h-screen overflow-y-auto p-4">
+      {data.map((pokemon) => (
+        <Link key={pokemon.name} to={`/pokemons/${pokemon.id}`}>
+          <div className="p-4 border border-gray-200 rounded-md shadow-md">
+            <h2 className="text-xl font-bold">{pokemon.name}</h2>
+            <p className="text-gray-500">{pokemon.type}</p>
+            <p className="text-gray-500">{pokemon.abilities}</p>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
 }
 
 export default App;
