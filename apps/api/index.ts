@@ -1,32 +1,33 @@
 import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
+import { Prisma, PrismaClient } from "@prisma/client";
+import zod from "zod";
 
+const prisma = new PrismaClient();
 const app: Express = express();
 const port = 3000;
 
+const pokemonSchema = zod.object({
+  name: zod.string(),
+  type: zod.string(),
+  abilities: zod.string(),
+});
+
 app.use(bodyParser.json());
 
-interface Pokemon {
-  id: number;
-  name: string;
-  type: string[];
-}
-
-let fakePokemonData: Pokemon[] = [
-  { id: 1, name: "Bulbasaur", type: ["Grass", "Poison"] },
-  { id: 2, name: "Charmander", type: ["Fire"] },
-  { id: 3, name: "Squirtle", type: ["Water"] },
-];
-
 // GET /api/pokemon - Retrieve all Pokémon
-app.get("/api/pokemon", (req: Request, res: Response) => {
-  res.json(fakePokemonData);
+app.get("/api/pokemon", async (req: Request, res: Response) => {
+  const pokemons = await prisma.pokemon.findMany();
+  res.json(pokemons);
 });
 
 // GET /api/pokemon/:id - Retrieve a specific Pokémon by ID
-app.get("/api/pokemon/:id", (req: Request, res: Response) => {
+app.get("/api/pokemon/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const pokemon = fakePokemonData.find((p) => p.id === id);
+  const pokemon = await prisma.pokemon.findUnique({
+    where: { id },
+  });
+
   if (pokemon) {
     res.json(pokemon);
   } else {
@@ -36,35 +37,33 @@ app.get("/api/pokemon/:id", (req: Request, res: Response) => {
 
 // POST /api/pokemon - Create a new Pokémon
 app.post("/api/pokemon", (req: Request, res: Response) => {
-  const newPokemon: Pokemon = req.body;
-  newPokemon.id = fakePokemonData.length + 1; // Simple ID generation
-  fakePokemonData.push(newPokemon);
-  res.status(201).json(newPokemon);
+  const newPokemon = pokemonSchema.parse(req.body);
+  const createdPokemon = prisma.pokemon.create({
+    data: newPokemon,
+  });
+  res.status(201).json(createdPokemon);
 });
 
 // PUT /api/pokemon/:id - Update a Pokémon by ID
 app.put("/api/pokemon/:id", (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const updatedPokemon: Pokemon = req.body;
-  const index = fakePokemonData.findIndex((p) => p.id === id);
-  if (index !== -1) {
-    fakePokemonData[index] = { ...updatedPokemon, id };
-    res.json(fakePokemonData[index]);
-  } else {
-    res.status(404).send("Pokémon not found");
-  }
+  const updatedPokemon = pokemonSchema.parse(req.body);
+  const pokemon = prisma.pokemon.update({
+    where: { id },
+    data: updatedPokemon,
+  });
+
+  res.json(pokemon);
 });
 
 // DELETE /api/pokemon/:id - Delete a Pokémon by ID
 app.delete("/api/pokemon/:id", (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const index = fakePokemonData.findIndex((p) => p.id === id);
-  if (index !== -1) {
-    fakePokemonData.splice(index, 1);
-    res.status(204).send();
-  } else {
-    res.status(404).send("Pokémon not found");
-  }
+  prisma.pokemon.delete({
+    where: { id },
+  });
+
+  res.status(204).send();
 });
 
 app.listen(port, () => {
