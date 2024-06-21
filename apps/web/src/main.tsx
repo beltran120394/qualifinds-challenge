@@ -5,6 +5,8 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import PokemonInfo from "./PokemonInfo.tsx";
+import NewPokemon from "./NewPokemon.tsx";
+import EditPokemon from "./EditPokemon.tsx";
 
 const queryClient = new QueryClient();
 
@@ -17,7 +19,15 @@ const router = createBrowserRouter([
     path: "/pokemons/:id",
     element: <PokemonInfo />,
   },
-  // Redirect to /pokemons if no route matches
+  {
+    path: "/new",
+    element: <NewPokemon />,
+  },
+  // Edit
+  {
+    path: "/pokemons/:id/edit",
+    element: <EditPokemon />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

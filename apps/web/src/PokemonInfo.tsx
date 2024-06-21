@@ -30,6 +30,11 @@ export default function PokemonInfo() {
         <p className="text-gray-500">Type: {data.type}</p>
         <p className="text-gray-500">Abilities: {data.abilities}</p>
       </div>
+      <Link to={`/pokemons/${id}/edit`}>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Edit
+        </button>
+      </Link>
     </div>
   );
 }

@@ -36,12 +36,13 @@ app.get("/api/pokemon/:id", async (req: Request, res: Response) => {
 });
 
 // POST /api/pokemon - Create a new Pokémon
-app.post("/api/pokemon", (req: Request, res: Response) => {
+app.post("/api/pokemon", async (req: Request, res: Response) => {
   const newPokemon = pokemonSchema.parse(req.body);
-  const createdPokemon = prisma.pokemon.create({
+  const createdPokemon = await prisma.pokemon.create({
     data: newPokemon,
   });
-  res.status(201).json(createdPokemon);
+
+  res.json(createdPokemon);
 });
 
 // PUT /api/pokemon/:id - Update a Pokémon by ID
